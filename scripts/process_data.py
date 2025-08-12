@@ -122,7 +122,11 @@ def fetch_all_data_files():
     response.raise_for_status()
     
     # Parse as XML since it's S3 bucket listing
-    soup = BeautifulSoup(response.content, 'xml')
+    try:
+        soup = BeautifulSoup(response.content, 'xml')
+    except:
+        # Fallback to html.parser if lxml not available
+        soup = BeautifulSoup(response.content, 'html.parser')
     
     # Find all zip files (only bluebikes from 201805+)
     zip_files = []

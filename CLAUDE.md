@@ -161,3 +161,4 @@ Cache automatically speeds up subsequent processing runs and includes validation
 - You can use jq, playwright
 - You can use gh cli to deploy as needed, and write commits frequently
 - write git commits as we go
+- Don't put claude in the commit messages
