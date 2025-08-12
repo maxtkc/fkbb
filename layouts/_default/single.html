@@ -1,0 +1,89 @@
+{{ define "main" }}
+<article>
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+    
+    {{ if eq .Type "station" }}
+        {{ $stationUuid := .Params.station_uuid }}
+        {{ $stationsData := index .Site.Data "stations" }}
+        {{ $stationRegistry := $stationsData.station_registry }}
+        {{ $stationPairs := $stationsData.station_pairs }}
+        {{ $destinations := index $stationPairs $stationUuid }}
+        
+        {{ if $destinations }}
+            <div class="station-details">
+                <p><strong>Location:</strong> {{ .Params.lat }}, {{ .Params.lng }}</p>
+                <p><strong>BlueBike Station IDs:</strong> {{ delimit .Params.bluebike_ids ", " }}</p>
+                <p><strong>All Known Names:</strong> {{ delimit .Params.all_names ", " }}</p>
+            </div>
+            
+            <table id="destinationsTable">
+                <thead>
+                    <tr>
+                        <th>Destination Station</th>
+                        <th>Fastest Time</th>
+                        <th>Distance</th>
+                        <th>Velocity</th>
+                        <th>Attempts</th>
+                        <th>Date Achieved</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ range $destUuid, $data := $destinations }}
+                        {{ $destInfo := index $stationRegistry $destUuid }}
+                        {{ if $destInfo }}
+                        {{ $distanceMiles := mul $data.distance_km 0.621371 }}
+                        {{ $velocityMph := div (mul $distanceMiles 60) $data.fastest_time_minutes }}
+                        <tr>
+                            <td>{{ $destInfo.current_name }}</td>
+                            <td class="time">{{ $data.fastest_time_formatted }}</td>
+                            <td>{{ printf "%.2f mi" $distanceMiles }}</td>
+                            <td>{{ printf "%.1f mph" $velocityMph }}</td>
+                            <td>{{ $data.attempts }}</td>
+                            <td class="date">{{ $data.fastest_set_at }}</td>
+                        </tr>
+                        {{ end }}
+                    {{ end }}
+                </tbody>
+            </table>
+            
+            <p><em>Times shown as MM:SS. Distance is straight-line distance. Velocity is calculated as distance/time. Data includes only classic bike trips.</em></p>
+        {{ else }}
+            <p>No data available for this station.</p>
+        {{ end }}
+    {{ end }}
+</article>
+
+{{ if eq .Type "station" }}
+<script>
+$(document).ready(function() {
+    $('#destinationsTable').DataTable({
+        order: [[3, 'desc']], // Sort by velocity (4th column) descending by default
+        pageLength: 25,
+        columnDefs: [
+            { type: 'time', targets: 1 }, // Time column
+            { 
+                type: 'num', 
+                targets: [2, 3], // Distance and velocity columns
+                render: function(data, type) {
+                    if (type === 'sort' || type === 'type') {
+                        // Extract just the number for sorting
+                        return parseFloat(data.replace(/[^\d.-]/g, ''));
+                    }
+                    return data; // Return original formatted data for display
+                }
+            },
+            { type: 'num', targets: 4 } // Attempts column
+        ],
+        language: {
+            search: "Search destinations:",
+            lengthMenu: "Show _MENU_ destinations per page",
+            info: "Showing _START_ to _END_ of _TOTAL_ destinations",
+            infoEmpty: "No destinations found",
+            infoFiltered: "(filtered from _MAX_ total destinations)"
+        }
+    });
+});
+</script>
+{{ end }}
+{{ end }}

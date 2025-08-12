@@ -1,0 +1,47 @@
+{{ define "main" }}
+<article>
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+    
+    {{ if .IsHome }}
+        <div id="stations">
+            <h2>All Stations</h2>
+            <input type="text" id="searchInput" class="search-box" placeholder="Search stations..." onkeyup="filterStationList()">
+            
+            <div class="station-grid">
+                {{ $stationsData := index .Site.Data "stations" }}
+                {{ $stationRegistry := $stationsData.station_registry }}
+                {{ $stationPairs := $stationsData.station_pairs }}
+                
+                {{ range $stationId, $destinations := $stationPairs }}
+                    {{ $stationInfo := index $stationRegistry $stationId }}
+                    {{ if $stationInfo }}
+                    <div class="destination-card station-card">
+                        <h3>
+                            <a href="{{ "stations" | relURL }}/{{ substr (replace $stationId "-" "") 0 12 }}/">{{ $stationInfo.current_name }}</a>
+                        </h3>
+                        <p>{{ len $destinations }} destinations</p>
+                        <p class="station-info">BlueBike IDs: {{ delimit $stationInfo.bluebike_ids ", " }}</p>
+                    </div>
+                    {{ end }}
+                {{ end }}
+            </div>
+        </div>
+    {{ end }}
+</article>
+
+<script>
+function filterStationList() {
+    const input = document.getElementById('searchInput');
+    if (!input) return;
+    
+    const filter = input.value.toLowerCase();
+    const cards = document.querySelectorAll('.station-card');
+    
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(filter) ? '' : 'none';
+    });
+}
+</script>
+{{ end }}

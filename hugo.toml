@@ -1,0 +1,11 @@
+baseURL = 'https://maxtkc.github.io/fkbb'
+languageCode = 'en-us'
+title = 'FKBB - Fastest Known BlueBike Times'
+
+[params]
+  description = 'Track the fastest recorded times between BlueBike stations'
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
