@@ -1,9 +1,11 @@
 # Data files and cache
 cache/
-data/stations.json
 backups/
 *.zip
 *.csv
+
+# Include processed data in git for GitHub Actions
+# data/stations.json - commented out to include in repo
 
 # Hugo build files
 public/
