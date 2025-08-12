@@ -643,11 +643,16 @@ def main():
         unprocessed_months = [month for month in all_months if month not in processed_months]
         unprocessed_months.sort()  # Process from oldest to newest
         
+        # Debug output
+        print(f"📊 Total available months: {len(all_months)}")
+        print(f"✅ Already processed months: {len(processed_months)} {list(processed_months)[:5]}{'...' if len(processed_months) > 5 else ''}")
+        print(f"⏳ Unprocessed months: {len(unprocessed_months)} {unprocessed_months[:5]}{'...' if len(unprocessed_months) > 5 else ''}")
+        
         if not unprocessed_months:
-            print("All months have been processed. No new data to process.")
+            print("🎉 All months have been processed. No new data to process.")
             return
         
-        print(f"Found {len(unprocessed_months)} unprocessed months: {unprocessed_months[:5]}{'...' if len(unprocessed_months) > 5 else ''}")
+        print(f"🚀 Will process {len(unprocessed_months)} months starting from {unprocessed_months[0]}")
         
         stations_data = existing_stations
         merged_registry = existing_registry

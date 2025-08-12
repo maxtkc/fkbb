@@ -29,6 +29,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         
+      - name: Cache processed data and cache files
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/stations.json
+            cache/
+          key: fkbb-data-${{ github.run_number }}
+          restore-keys: |
+            fkbb-data-
+        
       - name: Install Hugo CLI
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb
