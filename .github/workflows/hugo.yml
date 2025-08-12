@@ -50,7 +50,15 @@ jobs:
             # Create minimal data structure if processing fails
             echo '{"metadata":{"processed_months":[],"last_updated":"'"$(date -u +"%Y-%m-%d %H:%M:%S UTC")"'","total_stations":0},"station_registry":{},"station_pairs":{}}' > data/stations.json
             mkdir -p content/stations
-            echo '---\ntitle: "FKBB Tracker"\n---\n\n# Fastest Known BlueBike Times\n\nData processing is currently in progress. Please check back later.' > content/_index.md
+            cat > content/_index.md << 'EOF'
+---
+title: "FKBB Tracker"
+---
+
+# Fastest Known BlueBike Times
+
+Data processing is currently in progress. Please check back later.
+EOF
           }
         
       - name: Setup Pages
